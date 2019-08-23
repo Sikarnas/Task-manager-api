@@ -1,18 +1,18 @@
-const express = require('express')
-require('./db/mongoose')
-const userRouter = require('./routers/user')
-const taskRouter = require('./routers/task')
+const express = require("express");
+require("./db/mongoose");
+const userRouter = require("./routers/user");
+const taskRouter = require("./routers/task");
 
-const app = express()
-const port = process.env.PORT 
+const app = express();
+const port = process.env.PORT;
 
-app.use(express.json())
-app.use(userRouter)
-app.use(taskRouter)
+app.use(express.json());
+app.use(userRouter);
+app.use(taskRouter);
 
 app.listen(port, () => {
-    console.log('server is running on port ' + port)
-})
+  console.log("server is running on port " + port);
+});
 
 // const multer = require('multer')
 
@@ -43,7 +43,6 @@ app.listen(port, () => {
 //     res.status(400).send({error: error.message})
 // })
 
-
 // const Task = require('./models/task')
 // const User = require('./models/user')
 
@@ -69,4 +68,3 @@ app.listen(port, () => {
 // }
 
 // console.log(JSON.stringify(pet))
-
