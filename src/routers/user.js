@@ -5,6 +5,7 @@ const auth = require("../middleware/auth");
 const multer = require("multer");
 const sharp = require("sharp");
 const { sendEmail } = require("../emails/account");
+const logAll = require("../middleware/logMiddleware")
 
 const upload = multer({
   limits: {
@@ -20,7 +21,7 @@ const upload = multer({
 
 userRouter.post(
   "/users/me/avatar",
-  auth,
+  auth, logAll,
   upload.single("avatar"),
   async (req, res) => {
     const buffer = await sharp(req.file.buffer)
@@ -36,13 +37,13 @@ userRouter.post(
   }
 );
 
-userRouter.delete("/users/me/avatar", auth, async (req, res) => {
+userRouter.delete("/users/me/avatar", logAll,auth, async (req, res) => {
   req.user.avatar = undefined;
   await req.user.save();
   res.send();
 });
 
-userRouter.get("/users/:id/avatar", async (req, res) => {
+userRouter.get("/users/:id/avatar",logAll, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -57,7 +58,7 @@ userRouter.get("/users/:id/avatar", async (req, res) => {
   }
 });
 
-userRouter.post("/users", async (req, res) => {
+userRouter.post("/users",logAll, async (req, res) => {
   const user = new User(req.body);
   try {
     await user.save();
@@ -69,7 +70,7 @@ userRouter.post("/users", async (req, res) => {
   }
 });
 
-userRouter.post("/users/login", async (req, res) => {
+userRouter.post("/users/login",logAll, async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.body.email,
@@ -82,7 +83,7 @@ userRouter.post("/users/login", async (req, res) => {
   }
 });
 
-userRouter.post("/users/logout", auth, async (req, res) => {
+userRouter.post("/users/logout",logAll, auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter(token => {
       return token.token != req.token;
@@ -94,7 +95,7 @@ userRouter.post("/users/logout", auth, async (req, res) => {
   }
 });
 
-userRouter.post("/users/logoutAll", auth, async (req, res) => {
+userRouter.post("/users/logoutAll",logAll, auth, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -104,7 +105,7 @@ userRouter.post("/users/logoutAll", auth, async (req, res) => {
   }
 });
 
-userRouter.get("/users/me", auth, async (req, res) => {
+userRouter.get("/users/me",logAll, auth, async (req, res) => {
   res.send(req.user);
 });
 
@@ -118,7 +119,7 @@ userRouter.get("/users/me", auth, async (req, res) => {
 //     }
 // })
 
-userRouter.patch("/users/me", auth, async (req, res) => {
+userRouter.patch("/users/me",logAll, auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
   const isValid = updates.every(update => allowedUpdates.includes(update));
@@ -142,7 +143,7 @@ userRouter.patch("/users/me", auth, async (req, res) => {
   }
 });
 
-userRouter.delete("/users/me", auth, async (req, res) => {
+userRouter.delete("/users/me",logAll, auth, async (req, res) => {
   try {
     // const user = await User.findByIdAndDelete(req.user._id)
 
